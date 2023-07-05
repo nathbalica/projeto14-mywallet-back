@@ -3,35 +3,51 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 
 
-export async function signUp(req, res){
+export async function signUp(req, res) {
     const { name, email, password } = req.body;
-    
-    try{
-        const existEmail = db.collection('users').findOne({email})
+
+    try {
+        const existEmail = await db.collection("users").findOne({ email })
         if (existEmail) return res.status(409).send("E-mail já cadastrado")
 
         const hash = bcrypt.hashSync(password, 10);
 
-        await db.collection('users').insertOne({name, email, password: hash})
+        await db.collection("users").insertOne({ name, email, password: hash })
         res.sendStatus(201)
-    }catch(err){
+    } catch (err) {
         res.status(500).send(err.message);
     }
 }
 
-export async function signIn(req, res){
+export async function signIn(req, res) {
     const { email, password } = req.body;
 
-    const existUser = await db.collection('users').findOne({email})
-    if(!existUser) return res.status(404).send("Email não esta cadastrado")
+    try {
+        const existUser = await db.collection('users').findOne({ email })
+        if (!existUser) return res.status(404).send("Email não esta cadastrado")
 
-    const correctPassword = bcrypt.compareSync(password, existUser.password)
-    if(!correctPassword) return res.status(401).send("Senha incorreta")
+        const correctPassword = bcrypt.compareSync(password, existUser.password)
+        if (!correctPassword) return res.status(401).send("Senha incorreta")
 
-    
-    const token = uuid();
-    await db.collection("sessions").insertOne({token, userId: user._id})
 
-    res.status(200).send({token, userName: existUser.name});
+        const token = uuid();
+        await db.collection("sessions").insertOne({ token, userId: existUser._id })
 
+        res.status(200).send({ token, userName: existUser.name });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+
+}
+
+export async function logout(req, res){
+    const { token } = res.locals.session;
+
+    try{
+        await db.collection('sessions').deleteOne({ token });
+        res.sendStatus(200);
+    }catch(err){
+        res.status(500).send(err.message);
+    }
 }
