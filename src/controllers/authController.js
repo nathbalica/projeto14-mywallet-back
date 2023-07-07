@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 export async function signUp(req, res) {
     const { name, email, password } = req.body;
+    console.log({ name, email, password})
 
     try {
         const existEmail = await db.collection("users").findOne({ email })
