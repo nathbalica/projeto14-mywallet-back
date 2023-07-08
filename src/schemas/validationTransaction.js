@@ -16,3 +16,16 @@ export const transactionSchema = joi.object({
         'any.only': 'O campo "type" deve ser "entrada" ou "saida".',
     }),
 })
+
+export const transactionUpdateSchema = joi.object({
+    value: joi.number().positive().required().messages({
+        'any.required': 'O campo "email" é obrigatório.',
+        'string.empty': 'O campo "email" não pode estar vazio.',
+        'string.email': 'O campo "email" deve ter um formato válido.',
+    }),
+    description: joi.string().required().messages({
+        'any.required': 'O campo "description" é obrigatório.',
+        'string.empty': 'O campo "description" não pode estar vazio.',
+      })
+
+})
