@@ -10,9 +10,9 @@ export const transactionSchema = joi.object({
         'any.required': 'O campo "description" é obrigatório.',
         'string.empty': 'O campo "description" não pode estar vazio.',
       }),
-    type: joi.string().valid('profit', 'expense').required().messages({
+    type: joi.string().valid('entrada', 'saida').required().messages({
         'any.required': 'O campo "type" é obrigatório.',
         'string.empty': 'O campo "type" não pode estar vazio.',
-        'any.only': 'O campo "type" deve ser "profit" ou "expense".',
+        'any.only': 'O campo "type" deve ser "entrada" ou "saida".',
     }),
 })
